@@ -1,0 +1,34 @@
+name: "nats-server"
+services:
+  nats:
+    image: nats:latest
+    container_name: nats-server
+    entrypoint: /nats-server
+    command: "-c server.conf"
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - nats-data:/data
+      - ./server.conf:/server.conf
+    networks:
+      - backend
+
+  nats-nui:
+    image: ghcr.io/nats-nui/nui:latest
+    container_name: nats-nui
+    ports:
+      - "31311:31311"  # Порт для доступа к NATS NUI
+    volumes:
+      - nui-db:/db
+    networks:
+      - backend
+
+volumes:
+  nats-data:
+  nui-db:
+
+networks:
+  backend:
+    name: backend
+    external: true
